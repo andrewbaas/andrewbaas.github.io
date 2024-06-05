@@ -1,1 +1,41 @@
-Hello World!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="styles.css">
+    <title>Mind Reader 9000</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Mind Reader 9000</h1>
+        <form id="magic-form">
+            <label for="input1">Input 1 (C/W):</label>
+            <input type="text" id="input1" maxlength="2" required>
+            <label for="input1">Input 2 (C/W):</label>
+            <input type="text" id="input2" maxlength="2" required>
+            <label for="input1">Input 3 (C/W):</label>
+            <input type="text" id="input3" maxlength="2" required>
+            <label for="input1">Input 4 (C/W):</label>
+            <input type="text" id="input4" maxlength="2" required>
+            <label for="input1">Input 5 (C/W):</label>
+            <input type="text" id="input5" maxlength="2" required>
+            <label for="input1">Input 6 (C/W):</label>
+            <input type="text" id="input6" maxlength="2" required>
+            <label for="input1">Input 7 (C/W):</label>
+            <input type="text" id="input7" maxlength="2" required>
+            <label for="input1">Input 8 (C/W):</label>
+            <input type="text" id="input8" maxlength="2" required>
+            <label for="input1">Input 9 (C/W):</label>
+            <input type="text" id="input9" maxlength="2" required>
+            <label for="input1">Input 10 (C/W):</label>
+            <input type="text" id="input10" maxlength="2" required>
+            <label for="participant-color", id="participant-label">Participant's Card Color #1 (B/R):</label>
+            <input type="text" id="participant-color" maxlength="1" required>
+            <button type="button" onclick="performMagic()">Read Mind</button>
+        </form>
+        <p id="result"></p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
