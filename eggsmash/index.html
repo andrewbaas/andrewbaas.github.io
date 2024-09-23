@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="
+            https://cdn.jsdelivr.net/npm/chart.js">
+    </script>
+    <style>
+        thead th {
+            position: sticky;
+            top: 0;
+            min-width: 70px;
+            padding: 8px;
+            max-width: fit-content;
+            background-color: #b9b9b9;
+        }
+        #sim_res{
+            border-collapse: collapse;
+        }
+        #sim_res td, #sim_res th {
+            text-align: left;
+            border: 1px solid #000000;
+        }
+        #sim_res tr:nth-child(even) {
+            background-color: #DDD;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" style="display: flex; flex-direction: column; max-width: 1400px;">
+        <div class="row-1" style="display: flex">
+            <div class="egg_carton" style="width: 25%; height: 100px">
+                Egg Carton
+                <br>
+                <br>
+                <table id="egg_cart" style="outline: solid" outline="solid">
+                    <tr>
+                        <td>🔴</td>
+                        <td>🔴</td>
+                        <td>⚪</td>
+                        <td>⚪</td>
+                        <td>⚪</td>
+                        <td>⚪</td>
+                    </tr>
+                    <tr>
+                        <td>🔴</td>
+                        <td>🔴</td>
+                        <td>⚪</td>
+                        <td>⚪</td>
+                        <td>⚪</td>
+                        <td>⚪</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="egg_selection" style="width: 25%; height: 100px">
+                Egg Selection <br><br>
+                
+                <table id="egg_sel" style="outline: solid">
+                    <tr>
+                        <th>Guest</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>Jimmy</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <div class="egg_controls" style="width: 50%; height: 30px; ">
+            <form>
+                <label for="count">Choose number of iterations:</label>
+                <input type="number" id="count" name="# iterations" value="1" min="1" max="10000">
+                <button type="button" onclick="run_sim()">Run the Game!</button>
+            </form>
+        </div>
+        <div class="row-2" style="display: flex;">
+            <div id="sim_div" style="width: 600px; height: 300px; margin: 2%;">
+            <canvas id="simulation_plot" width="300" height="150">
+            </canvas>
+            </div>
+            <div style="width: fit-content;">
+                Simulation Results <br><br>
+                <div style="width: fit-content; height: 300px; overflow: scroll">
+                    <table id="sim_res" style="">
+                        <tr>
+                            <thead>
+                                <th></th>
+                                <th>Number of Games</th>
+                                <th>Number Fallon Won</th>
+                                <th>% Fallon Won</th>
+                            </thead>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+
+        let ctx = document
+            .getElementById('simulation_plot')
+            .getContext('2d');
+
+        let egg_chart = new Chart(ctx,{
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    data: []
+                }]
+            },
+            options: {
+                elements:{
+                    point:{
+                        backgroundColor: "#000000"
+                    }
+                },
+                plugins:{
+                    legend:{
+                    display: false
+                    },
+                },
+                responsive: true,
+                scales: {
+                    x: {
+                        title:{
+                            display: true,
+                            text: '# of Games Played',
+                            font:{
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        type: 'linear',
+                        position: 'bottom',
+                        min: 0,
+                        suggestedMax: 10
+                    },
+                    y: {
+                        title:{
+                            display: true,
+                            text: '% Games Won by Fallon',
+                            font:{
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        type: 'linear',
+                        position: 'left',
+                        min: 0,
+                        max: 1
+                    }
+                }
+            }
+        })
+
+        function shuffle(unshuffled){
+            //Pretty shuffle code pulled from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+            shuffled = unshuffled
+                .map(value => ({ value, sort: Math.random() }))
+                .sort((a, b) => a.sort - b.sort)
+                .map(({ value }) => value);
+            return shuffled;
+        }
+    
+        var eggs = shuffle(['R', 'R', 'R', 'R', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'])
+        var egg_list = []
+        function simulate(){
+            eggs = shuffle(['R', 'R', 'R', 'R', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'])
+            var new_eggs = [...eggs]
+            var guest_score = 0;
+            var jimmy_score = 0;
+            turn = 'guest'
+            egg_list = []
+            while(guest_score < 2 && jimmy_score < 2){
+                if(turn == 'guest'){
+                    egg_ind = Math.floor(Math.random() * new_eggs.length);
+                    egg = new_eggs[egg_ind]
+                    egg_list.push(egg)
+                    if(egg == 'R'){
+                        guest_score += 1;
+                    }
+                    new_eggs.splice(egg_ind, 1)
+                    turn = 'jimmy';
+                } else {
+                    egg_ind = Math.floor(Math.random() * new_eggs.length);
+                    egg = new_eggs[egg_ind]
+                    egg_list.push(egg)
+                    if(egg == 'R'){
+                        jimmy_score += 1;
+                    }
+                    new_eggs.splice(egg_ind, 1)
+                    turn = 'guest';
+                }
+            }
+            return [guest_score, jimmy_score];
+        }
+        var data_points = []
+        var j_wins = 0
+        var j_raw = []
+        var g_raw = []
+        function play_game(count){
+            var guest_score, jimmy_score;
+            for(let i = 0; i < count; i++){
+                [guest_score, jimmy_score] = simulate()
+                g_raw.push(guest_score)
+                j_raw.push(jimmy_score)
+                dp = {}
+                if( guest_score < 2){
+                    dp['winner'] = 'Guest';
+                } else {
+                    dp['winner'] = 'Jimmy';
+                    j_wins += 1;
+                }
+                dp['perc_win'] = j_wins / (data_points.length + 1)
+                data_points.push(dp)
+                egg_chart.data.datasets[0].data.push({x: data_points.length, y: dp['perc_win']})
+            }
+            update_page(j_raw, g_raw)
+        }
+
+        function update_page(fallon_raw, guest_raw){
+            egg_chart.update()
+            var table = document.getElementById("egg_cart");
+            for (var i = 0, row; row = table.rows[i]; i++) {
+                for (var j = 0, col; col = row.cells[j]; j++) {
+                    if(eggs[i * 6 + j] == 'R'){
+                        col.innerText = '🔴';
+                    } else{
+                        col.innerText = '⚪';
+                    }
+                }
+            }
+            var table2 = document.getElementById("egg_sel");
+            console.log(egg_list)
+            for (var i = 0, row; row = table2.rows[i]; i++) {
+                for (var j = 1, col; col = row.cells[j]; j++) {
+                    col.innerText = ""
+                }
+            }
+            for (var i = 0; i < egg_list.length; i++) {
+                var r = i % 2, c = Math.floor(i / 2) + 1;
+                if(egg_list[i] == 'R'){
+                    table2.rows[r].cells[c].innerText = '🔴';
+                } else{
+                    table2.rows[r].cells[c].innerText = '⚪';
+                }
+            }
+
+            
+            var res_tab = document.getElementById("sim_res");
+            var row = res_tab.insertRow()
+            row.insertCell(0).innerText = res_tab.rows.length - 2
+            row.insertCell(1).innerText = data_points.length
+            row.insertCell(2).innerText = j_wins
+            row.insertCell(3).innerText = Math.floor(j_wins / data_points.length * 10000)/100 + "%"
+        }
+
+        function run_sim(){
+            var count = document.getElementById('count').value
+            play_game(Math.min(10000, count))
+        }
+
+        function clear(){
+            data_points = []
+            g_wins = 0
+            j_raw = []
+            g_raw = []
+            egg_chart.data.datasets[0].data = []
+            egg_chart.update()
+        }
+    
+    </script>
+</body>
